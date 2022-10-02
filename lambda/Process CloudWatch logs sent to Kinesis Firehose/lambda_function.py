@@ -88,7 +88,7 @@ def transformLogEvent(log_event,log_stream):
     a = {}
     a['logstream'] = log_stream
     a['message'] = json.dumps(log_event['message'])
-    return json.dumps(a)
+    return json.dumps(a) + '\n'
 
 def processRecords(records):
     for r in records:
@@ -102,8 +102,8 @@ def processRecords(records):
                 'recordId': recId
             }
         elif data['messageType'] == 'DATA_MESSAGE':
-        	# send log stream name to `transformLogEvent` function 
-        	# for easy query later in Athena
+            # send log stream name to `transformLogEvent` function 
+            # for easy query later in Athena
             f=data['logStream']
             joinedData = ''.join([transformLogEvent(e,f) for e in data['logEvents']])
             dataBytes = joinedData.encode("utf-8")

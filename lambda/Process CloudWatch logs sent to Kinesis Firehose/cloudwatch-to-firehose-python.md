@@ -25,3 +25,10 @@ https://github.com/panlm/aws-labs/raw/main/lambda/Process%20CloudWatch%20logs%20
 
 
 
+## layer version
+[[add-layer-to-lambda]]
+
+```python
+
+```
+

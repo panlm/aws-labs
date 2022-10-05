@@ -68,6 +68,8 @@ import base64
 import json
 import gzip
 import boto3
+import re
+from flatten_json import flatten
 
 
 def transformLogEvent(log_event,log_stream):
@@ -85,9 +87,27 @@ def transformLogEvent(log_event,log_stream):
     
     # put message json in json value
     # due to some json key name in message consists of invalid characters, such as '/', '$' 
+    
     a = {}
+    a['id'] = log_event['id']
+    a['timestamp'] = log_event['timestamp']
     a['logstream'] = log_stream
-    a['message'] = json.dumps(log_event['message'])
+    a['message'] = log_event['message']
+    
+    try:
+        a['flatten_message'] = flatten(json.loads(log_event['message']))
+    except ValueError as e:
+        a['flatten_message'] = {}
+
+    # copy to another dict
+    # modify key name with specific character: $/
+    i = {}
+    i = a['flatten_message'].copy() 
+    for k,v in i.items():
+        new_k = re.sub("[$/]","..",k)
+        if not new_k == k:
+            a['flatten_message'][new_k] = a['flatten_message'].pop(k)        
+
     return json.dumps(a) + '\n'
 
 def processRecords(records):
@@ -102,8 +122,8 @@ def processRecords(records):
                 'recordId': recId
             }
         elif data['messageType'] == 'DATA_MESSAGE':
-            # send log stream name to `transformLogEvent` function 
-            # for easy query later in Athena
+        	# send log stream name to `transformLogEvent` function 
+        	# for easy query later in Athena
             f=data['logStream']
             joinedData = ''.join([transformLogEvent(e,f) for e in data['logEvents']])
             dataBytes = joinedData.encode("utf-8")

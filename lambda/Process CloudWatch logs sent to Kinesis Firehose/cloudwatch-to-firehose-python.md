@@ -5,6 +5,7 @@ tags: aws/serverless/lambda
 ---
 # cloudwatch-to-firehose-python
 
+## create
 source from here
 1. create from blueprint `Process CloudWatch logs sent to Kinesis Firehose`
 ```
@@ -16,19 +17,22 @@ python3.8 · kinesis-firehose · cloudwatch-logs · splunk
 ```
 
 
-## modification 
+## revision
 
 ![[./lambda_function.py]]
 
 download from here
 https://github.com/panlm/aws-labs/raw/main/lambda/Process%20CloudWatch%20logs%20sent%20to%20Kinesis%20Firehose/lambda_function.py
 
+## 3-party python lib
+![[./package.zip]]
 
+download from here
+https://github.com/panlm/aws-labs/raw/main/lambda/Process%20CloudWatch%20logs%20sent%20to%20Kinesis%20Firehose/package.zip
 
 ## layer version
-[[add-layer-to-lambda]]
+- [[lambda-cmd#add layer to lambda]]
 
-```python
 
-```
+
 

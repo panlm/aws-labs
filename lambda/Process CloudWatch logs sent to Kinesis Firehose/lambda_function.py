@@ -69,7 +69,7 @@ import json
 import gzip
 import boto3
 import re
-from flatten_json import flatten
+# from flatten_json import flatten
 
 
 def transformLogEvent(log_event,log_stream):
@@ -94,19 +94,19 @@ def transformLogEvent(log_event,log_stream):
     a['logstream'] = log_stream
     a['message'] = log_event['message']
     
-    try:
-        a['flatten_message'] = flatten(json.loads(log_event['message']))
-    except ValueError as e:
-        a['flatten_message'] = {}
+    # try:
+    #     a['flatten_message'] = flatten(json.loads(log_event['message']))
+    # except ValueError as e:
+    #     a['flatten_message'] = {}
 
-    # copy to another dict
-    # modify key name with specific character: $/
-    i = {}
-    i = a['flatten_message'].copy() 
-    for k,v in i.items():
-        new_k = re.sub("[$/]","..",k)
-        if not new_k == k:
-            a['flatten_message'][new_k] = a['flatten_message'].pop(k)        
+    # # copy to another dict
+    # # modify key name with specific character: $/
+    # i = {}
+    # i = a['flatten_message'].copy() 
+    # for k,v in i.items():
+    #     new_k = re.sub("[$/]","..",k)
+    #     if not new_k == k:
+    #         a['flatten_message'][new_k] = a['flatten_message'].pop(k)        
 
     return json.dumps(a) + '\n'
 

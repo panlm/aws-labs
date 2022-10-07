@@ -72,7 +72,7 @@ import re
 # from flatten_json import flatten
 
 
-def transformLogEvent(log_event,log_stream):
+def transformLogEvent(log_event,log_group,log_stream):
     """Transform each log event.
 
     The default implementation below just extracts the message and appends a newline to it.
@@ -91,6 +91,7 @@ def transformLogEvent(log_event,log_stream):
     a = {}
     a['id'] = log_event['id']
     a['timestamp'] = log_event['timestamp']
+    a['loggroup'] = log_group
     a['logstream'] = log_stream
     a['message'] = log_event['message']
     
@@ -124,8 +125,9 @@ def processRecords(records):
         elif data['messageType'] == 'DATA_MESSAGE':
         	# send log stream name to `transformLogEvent` function 
         	# for easy query later in Athena
-            f=data['logStream']
-            joinedData = ''.join([transformLogEvent(e,f) for e in data['logEvents']])
+            lg=data['logGroup']
+            ls=data['logStream']
+            joinedData = ''.join([transformLogEvent(e,lg,ls) for e in data['logEvents']])
             dataBytes = joinedData.encode("utf-8")
             encodedData = base64.b64encode(dataBytes).decode('utf-8')
             yield {

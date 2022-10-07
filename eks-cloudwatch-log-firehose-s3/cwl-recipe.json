@@ -148,5 +148,24 @@
         "targetColumn": "message_annotations"
       }
     }
+  },
+  {
+    "Action": {
+      "Operation": "DELETE",
+      "Parameters": {
+        "sourceColumns": "[\"message\"]"
+      }
+    }
+  },
+  {
+    "Action": {
+      "Operation": "EXTRACT_BETWEEN_DELIMITERS",
+      "Parameters": {
+        "endPattern": "-[^-]+$",
+        "sourceColumn": "logstream",
+        "startPattern": "^",
+        "targetColumn": "logstream_type"
+      }
+    }
   }
 ]

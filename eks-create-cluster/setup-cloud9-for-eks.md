@@ -58,7 +58,7 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 helm version --short
 
 # install aws-iam-authenticator
-curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+wget -O aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
 chmod +x ./aws-iam-authenticator
 sudo mv ./aws-iam-authenticator /usr/local/bin/
 
@@ -81,6 +81,7 @@ flux -v
 ```
 
 4. resize cloud9 disk
+5. disable cloud9 aws credential management
 ```sh
 if [[ -c /dev/nvme0 ]]; then
   wget -qO- https://github.com/amazonlinux/amazon-ec2-utils/raw/main/ebsnvme-id >/tmp/ebsnvme-id
@@ -97,10 +98,8 @@ sleep 10
 sudo growpart ${DEVICE_NAME} 1
 sudo xfs_growfs -d /
 
-```
+# ---
 
-5. disable cloud9 aws credential management
-```sh
 aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE
 rm -vf ${HOME}/.aws/credentials
 

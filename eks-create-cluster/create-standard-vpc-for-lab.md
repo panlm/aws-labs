@@ -3,7 +3,6 @@ created: 2022-04-10 22:12:29.404
 last_modified: 2022-04-10 22:12:29.404
 tags: aws/network/vpc aws/mgmt/cloudformation 
 ---
-
 ```ad-attention
 title: This is a github note
 
@@ -39,17 +38,30 @@ aws cloudformation create-stack --stack-name ${STACK_NAME} \
   --region ${AWS_REGION}
 
 # until get CREATE_COMPLETE
-aws cloudformation --region ${AWS_REGION} describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].StackStatus' --output text
+while true ; do
+  status=$(aws cloudformation --region ${AWS_REGION} describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].StackStatus' --output text)
+  echo ${status}
+  if [[ ${status} == 'CREATE_IN_PROGRESS' ]]; then
+    sleep 10
+  else
+    break
+  fi
+done
 
 PublicSubnet1ID=$(aws cloudformation --region ${AWS_REGION} describe-stacks --stack-name ${STACK_NAME} --query 'Stacks[0].Outputs[?OutputKey==`PublicSubnet1ID`].OutputValue' --output text)
 
 OWNER_ARN=$(aws sts get-caller-identity  --query 'Arn'  --output text)
-aws cloud9 create-environment-ec2 \
+ENV_ID=$(aws cloud9 create-environment-ec2 \
 --name ${STACK_NAME} \
 --instance-type t3.small \
 --subnet-id ${PublicSubnet1ID} \
 --automatic-stop-time-minutes 10080 \
---owner-arn ${OWNER_ARN} 
+--owner-arn ${OWNER_ARN} \
+--query 'environmentId' --output text )
+
+(C9_URL=https://${AWS_REGION}.console.aws.amazon.com/cloud9/ide/${ENV_ID}
+echo "open cloud9 url:"
+echo "${C9_URL}")
 
 ```
 

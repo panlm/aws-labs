@@ -8,12 +8,17 @@ title: This is a github note
 
 ```
 # eks-private-access-cluster
-## prep your vpc
-- [[create-standard-vpc-for-lab]]
+## prep bastion
+- 创建vpc和cloud9 
+    - [[create-standard-vpc-for-lab]]
 
 ## prep cloud9
-- create cloud9 instance in vpc
-- [[setup-cloud9-for-eks]]
+- 安装必要的软件 
+    - [[setup-cloud9-for-eks]]
+```sh
+sudo yum -y install jq gettext bash-completion moreutils wget
+```
+
 - 创建安全组 eks-shared-sg，inbound规则是自己 (needed if your cluster is private only mode )
 ```sh
 # export VPC_ID=vpc-xxxxxxxx
@@ -22,7 +27,12 @@ INST_ID=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq
 VPC_ID=$(aws ec2 describe-instances --instance-ids ${INST_ID} |jq -r '.Reservations[0].Instances[0].VpcId')
 
 SG_NAME=eks-shared-sg
-SG_ID=$(aws ec2 describe-security-groups  --region $AWS_REGION --filter Name=vpc-id,Values=$VPC_ID --query "SecurityGroups[?GroupName == '"${SG_NAME}"'].GroupId" --output text)
+SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION \
+--filter Name=vpc-id,Values=$VPC_ID \
+--query "SecurityGroups[?GroupName == '"${SG_NAME}"'].GroupId" \
+--output text)
+
+# if SG does not existed, then create it
 if [[ -z ${SG_ID} ]]; then
 SG_ID=$(aws ec2 create-security-group \
   --description ${SG_NAME} \
@@ -35,6 +45,7 @@ aws ec2 authorize-security-group-ingress \
     --protocol all \
     --source-group ${SG_ID}
 fi
+
 ```
 
 - assign security group to cloud9 instance
@@ -53,7 +64,7 @@ aws ec2 describe-instance-attribute --instance-id $INST_ID --attribute groupSet
 - if you create private only cluster in vpc which you have created with public/private eks endpoint, using the **Shared SG** of the previous cluster
 
 ---
-## prep environment
+## prep config
 
 ```sh
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
@@ -100,9 +111,9 @@ fi )
 - ensure you have no s3 endpoint in your target vpc 
     - you could have ssm/ssmmessages endpoint
 
----
-## cluster yaml
 
+## cluster yaml
+`cluster1.yaml`
 ```yaml
 ---
 apiVersion: eksctl.io/v1alpha5

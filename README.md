@@ -32,7 +32,7 @@ title: compatible github md format
 * [metric server](./eks-monitor/install-metric-server.md)
 
 ## data analytics
-* [Process CloudWatch logs sent to S3 through Kinesis Firehose](./cloudwatch-log-to-firehose-s3/cloudwatch-to-firehose-python.md)
+* [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-to-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
 
 
 

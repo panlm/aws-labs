@@ -13,7 +13,23 @@ min_depth: 2
 max_depth: 3
 ```
 
-## rest-api
+## 使用场景
+Amazon Redshift 数据 API 使您能够使用所有类型的传统、云原生和容器化、基于 Web 服务的无服务器应用程序和事件驱动的应用程序轻松访问来自 Amazon Redshift 的数据。
+
+![redshift-data-api-lab-2.jpeg](./redshift-data-api-lab-2.jpeg)
+
+Amazon Redshift Data API 不能替代 JDBC 和 ODBC 驱动程序，适用于不需要与集群建立持久连接的用例。它适用于以下用例：
+
+- 使用 AWS 开发工具包支持的任何编程语言从自定义应用程序访问 Amazon Redshift。这使您能够集成基于 Web 服务的应用程序，以使用 API 访问来自 Amazon Redshift 的数据以运行 SQL 语句。例如，您可以从 JavaScript 运行 SQL。
+- 构建无服务器数据处理工作流程。
+- 设计异步 Web 仪表板，因为 Data API 允许您运行长时间运行的查询，而无需等待它完成。
+- 运行一次查询并多次检索结果，而无需在 24 小时内再次运行查询。
+- 使用 AWS Step Functions、Lambda 和存储过程构建您的 ETL 管道。
+- 简化了从 Amazon SageMaker 和 Jupyter 笔记本对 Amazon Redshift 的访问。
+- 使用 Amazon EventBridge 和 Lambda 构建事件驱动的应用程序。
+- 调度 SQL 脚本以简化物化视图的数据加载、卸载和刷新。
+
+## rest-api lab
 - [postman example](https://github.com/aws-samples/getting-started-with-amazon-redshift-data-api/tree/main/use-cases/rest-api-with-redshift-data-api)
     
 ### list database
@@ -53,7 +69,7 @@ body:
 ```
 
 
-## cli
+## command line lab
 - [shell/python example](https://github.com/aws-samples/getting-started-with-amazon-redshift-data-api/tree/main/use-cases/ec2-redshift-access)
 
 ```sh

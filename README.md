@@ -1,6 +1,6 @@
 ---
 created: 2022-09-16 13:39:08.529
-last_modified: 2022-09-16 13:39:08.529
+last_modified: 2022-10-10 13:39:08.529
 ---
 # README
 ```ad-note
@@ -35,5 +35,12 @@ title: compatible github md format
 * [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
 
 ## redshift
-* [Redshift Data API Lab](./redshift/redshift-data-api-lab.md)
+* [Redshift Data API Lab](./redshift-data-api/redshift-data-api-lab.md)
+
+## storage gateway
+* [File Gateway Lab](./storage-gateway/file-gateway-lab.md)
+
+
+
+
 

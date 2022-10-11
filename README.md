@@ -32,8 +32,8 @@ title: compatible github md format
 * [metric server](./eks-monitor/install-metric-server.md)
 
 ## data analytics
-* [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-to-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
+* [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
 
-
-
+## redshift
+* [Redshift Data API Lab](./redshift/redshift-data-api-lab.md)
 

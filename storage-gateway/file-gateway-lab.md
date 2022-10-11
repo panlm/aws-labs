@@ -155,7 +155,8 @@ aws storagegateway create-nfs-file-share \
 --file-share-name ${BUCKET_NAME}-${PREFIX_NAME} \
 --client-list "172.31.0.0/16" \
 --cache-attributes "CacheStaleTimeoutInSeconds=300" \
---bucket-region ${AWS_REGION} 
+--squash NoSquash \
+--bucket-region ${AWS_REGION}
 
 fs_arn=$(aws storagegateway list-file-shares --gateway-arn ${FGW_ARN} \
 --query 'FileShareInfoList[0].FileShareARN' \

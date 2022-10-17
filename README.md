@@ -31,6 +31,9 @@ title: compatible github md format
 * [prometheus in cloudwatch](./eks-monitor/enable-prometheus-in-cloudwatch.md)
 * [metric server](./eks-monitor/install-metric-server.md)
 
+### fargate
+- [Fargate Lab](./eks-fargate/eks-fargate-lab.md)
+
 ## data analytics
 * [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
 

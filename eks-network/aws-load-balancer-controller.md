@@ -87,6 +87,21 @@ helm upgrade -i aws-load-balancer-controller \
 find registry url from [[eks-container-image-registries-url-by-region]]
 using parameter `image.repository`  (refer [LINK](https://github.com/kubernetes-sigs/aws-load-balancer-controller/tree/main/helm/aws-load-balancer-controller))
 
+if you got `ImagePullBackOff`, could replace domain name as following
+```sh
+kubectl -n kube-system edit deployment aws-load-balancer-controller
+
+```
+
+```
+# https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+# add `.cn` postfix for china region
+REGISTRY=602401143452.dkr.ecr.us-east-1.amazonaws.com
+# REGISTRY=961992271922.dkr.ecr.cn-northwest-1.amazonaws.com.cn
+
+```
+
+
 ## blog
 - [[How To Expose Multiple Applications on Amazon EKS Using a Single Application Load Balancer]]
 

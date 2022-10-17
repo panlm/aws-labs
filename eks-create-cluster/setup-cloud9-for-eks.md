@@ -157,9 +157,12 @@ if [[ ${instance_profile_arn} == "None" ]]; then
     --iam-instance-profile Name=${ROLE_NAME} \
     --instance-id ${C9_INST_ID}
 else
-  aws iam add-role-to-instance-profile \
-    --instance-profile-name ${instance_profile_arn} \
-    --role-name ${ROLE_NAME}
+  existed_role_name=$(aws iam get-instance-profile \
+    --instance-profile-name ${instance_profile_arn##*/} \
+    --query 'InstanceProfile.Roles[0].RoleName' \
+    --output text)
+  aws iam attach-role-policy --role-name ${existed_role_name} \
+    --policy-arn "arn:aws:iam::aws:policy/AdministratorAccess"
 fi
 
 ```

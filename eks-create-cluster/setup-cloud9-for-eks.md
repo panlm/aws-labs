@@ -1,6 +1,6 @@
 ---
 created: 2022-05-21 12:46:05.435
-last_modified: 2022-06-05 12:46:05.435
+last_modified: 2022-10-17 08:17:09.959
 tags: aws/container/eks aws/cloud9 
 ---
 ```ad-attention
@@ -8,6 +8,9 @@ title: This is a github note
 
 ```
 # setup-cloud9-for-eks
+```toc
+```
+
 ## install
 1. resize disk - [[cloud9-resize-instance-volume-script]]
 2. disable temporary credential from settings and delete `aws_session_token=` line in `~/.aws/credentials`
@@ -78,6 +81,10 @@ flux -v
 # fluxctl version
 # fluxctl identity --k8s-fwd-ns flux
 
+# install ssm session plugin
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo yum install -y session-manager-plugin.rpm
+
 ```
 
 4. resize cloud9 disk
@@ -105,9 +112,13 @@ rm -vf ${HOME}/.aws/credentials
 
 ```
 
-6. 分配管理员role到instance，你可以手工执行该步骤。或者如果你有workshop的Credentials，直接先复制粘贴到命令行，再执行下列步骤（直接执行下列步骤可能遇到权限不够的告警）
+6. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。如果已经有role绑定，请手工执行添加管理员policy
+- 如果你有workshop的Credentials，直接先复制粘贴到命令行，再执行下列步骤
+- 或者如果自己账号的cloud9，先用 `aws configure` 配置aksk
+
 ```sh
 AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+C9_INST_ID=$(curl 169.254.169.254/latest/meta-data/instance-id)
 ROLE_NAME=adminrole-$RANDOM
 cat > trust.json <<-EOF
 {
@@ -127,17 +138,34 @@ aws iam create-role --role-name ${ROLE_NAME} \
   --assume-role-policy-document file://trust.json
 aws iam attach-role-policy --role-name ${ROLE_NAME} \
   --policy-arn "arn:aws:iam::aws:policy/AdministratorAccess"
-aws iam create-instance-profile --instance-profile-name ${ROLE_NAME}
-sleep 15
-aws iam add-role-to-instance-profile --instance-profile-name ${ROLE_NAME} --role-name ${ROLE_NAME}
 
-INST_ID=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document |jq -r '.instanceId')
-aws ec2 associate-iam-instance-profile --iam-instance-profile Name=${ROLE_NAME} --instance-id ${INST_ID}
+instance_profile_arn=$(aws ec2 describe-iam-instance-profile-associations \
+  --filter Name=instance-id,Values=$C9_INST_ID \
+  --query IamInstanceProfileAssociations[0].IamInstanceProfile.Arn \
+  --output text)
+if [[ ${instance_profile_arn} == "None" ]]; then
+  # create one
+  aws iam create-instance-profile \
+    --instance-profile-name ${ROLE_NAME}
+  sleep 15
+  # attach role to it
+  aws iam add-role-to-instance-profile \
+    --instance-profile-name ${ROLE_NAME} \
+    --role-name ${ROLE_NAME}
+  # attach instance profile to ec2
+  aws ec2 associate-iam-instance-profile \
+    --iam-instance-profile Name=${ROLE_NAME} \
+    --instance-id ${C9_INST_ID}
+else
+  aws iam add-role-to-instance-profile \
+    --instance-profile-name ${instance_profile_arn} \
+    --role-name ${ROLE_NAME}
+fi
 
 ```
 
 
-## refer
+## reference
 - https://docs.amazonaws.cn/en_us/eks/latest/userguide/install-aws-iam-authenticator.html
 - [[switch-role-to-create-dedicate-cloud9]]
 
@@ -148,8 +176,6 @@ If you turn off AWS managed temporary credentials, by default the environment ca
 
 - Attach an instance profile to the Amazon EC2 instance that connects to the environment. For instructions, see [Create and Use an Instance Profile to Manage Temporary Credentials](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-temporary).
 - Store your permanent AWS access credentials in the environment, for example, by setting special environment variables or by running the `aws configure` command. For instructions, see [Create and store permanent access credentials in an Environment](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-permanent-create).
-
-
 
 
 

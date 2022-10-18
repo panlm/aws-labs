@@ -1,6 +1,6 @@
 ---
 created: 2022-06-25 09:17:05.835
-last_modified: 2022-06-25 09:17:05.835
+last_modified: 2022-10-18 08:05:07.741
 tags: aws/container/eks aws/container/fargate 
 ---
 ```ad-attention
@@ -20,7 +20,8 @@ title: This is a github note
 - 安装必要的软件
 ```sh
 aws s3 cp s3://ee-assets-prod-us-east-1/modules/bd7b369f613f452dacbcea2a5d058d5b/v6/eksinit.sh . 
-chmod +x eksinit.sh && ./eksinit.sh 
+chmod +x eksinit.sh
+./eksinit.sh 
 source ~/.bash_profile 
 source ~/.bashrc
 

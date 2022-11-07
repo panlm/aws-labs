@@ -15,8 +15,9 @@ title: This is a github note
 
 ## 环境准备
 
-- 登录你的实验环境 ([LINK](https://dashboard.eventengine.run/login))
-- 进入 aws cloud9 ([LINK](https://console.aws.amazon.com/cloud9))，打开已经准备好的 `EKSLabIDE` 桌面
+- 登录你的实验环境 ([LINK](https://dashboard.eventengine.run/login))，并且打开 `AWS Console` 
+- 进入 aws cloud9 ([LINK](https://console.aws.amazon.com/cloud9))，打开已经准备好的 `EKSLabIDE` 桌面，点击 `+` 新建一个 `Terminal` 窗口
+
 - 安装必要的软件
 ```sh
 aws s3 cp s3://ee-assets-prod-us-east-1/modules/bd7b369f613f452dacbcea2a5d058d5b/v6/eksinit.sh . 
@@ -134,6 +135,10 @@ kubectl get ing -n ${NAMESPACE} -o=custom-columns="URL":.status.loadBalancer.ing
 
 ```
 
+
+## other fargate labs
+- [immersion workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/76a5dd80-3249-4101-8726-9be3eeee09b2/en-US/fargate)
+- [eksworkshop](https://www.eksworkshop.com/beginner/180_fargate/)
 
 
 

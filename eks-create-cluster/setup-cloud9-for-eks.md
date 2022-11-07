@@ -68,8 +68,9 @@ sudo mv ./aws-iam-authenticator /usr/local/bin/
 # option
 # install jwt-cli
 # https://github.com/mike-engel/jwt-cli/blob/main/README.md
-# sudo yum -y install cargo
-# cargo install jwt-cli
+sudo yum -y install cargo
+cargo install jwt-cli
+sudo ln -sf ~/.cargo/bin/jwt /usr/local/bin/jwt
 
 # install flux & fluxctl
 curl -s https://fluxcd.io/install.sh | sudo bash
@@ -112,7 +113,7 @@ rm -vf ${HOME}/.aws/credentials
 
 ```
 
-6. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。如果已经有role绑定，请手工执行添加管理员policy
+6. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。
 - 如果你有workshop的Credentials，直接先复制粘贴到命令行，再执行下列步骤
 - 或者如果自己账号的cloud9，先用 `aws configure` 配置aksk
 
@@ -147,11 +148,12 @@ if [[ ${instance_profile_arn} == "None" ]]; then
   # create one
   aws iam create-instance-profile \
     --instance-profile-name ${ROLE_NAME}
-  sleep 15
+  sleep 10
   # attach role to it
   aws iam add-role-to-instance-profile \
     --instance-profile-name ${ROLE_NAME} \
     --role-name ${ROLE_NAME}
+  sleep 10
   # attach instance profile to ec2
   aws ec2 associate-iam-instance-profile \
     --iam-instance-profile Name=${ROLE_NAME} \
@@ -166,6 +168,13 @@ else
 fi
 
 ```
+
+7. 在 cloud9 中，重新打开一个 terminal 窗口，并验证权限符合预期。如果权限又问题，请手工移除 instance profile ，再 assign 。
+```sh
+aws sts get-caller-identity
+
+```
+
 
 
 ## reference

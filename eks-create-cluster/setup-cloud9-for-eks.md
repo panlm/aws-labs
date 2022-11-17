@@ -11,7 +11,36 @@ title: This is a github note
 ```toc
 ```
 
-## install
+## need a cloud9 instance in your region
+click [here](https://us-east-2.console.aws.amazon.com/cloudshell) to run cloud shell and execute code block, and go to your region and open cloud9
+
+```sh
+export AWS_DEFAULT_REGION=us-east-2 # need put each command
+
+DEFAULT_VPC=$(aws ec2 describe-vpcs \
+  --filter Name=is-default,Values=true \
+  --query 'Vpcs[0].VpcId' --output text \
+  --region ${AWS_DEFAULT_REGION})
+
+if [[ ! -z ${DEFAULT_VPC} ]]; then
+  FIRST_SUBNET=$(aws ec2 describe-subnets \
+    --filters "Name=vpc-id,Values=${DEFAULT_VPC}" \
+    --query "Subnets[?AvailabilityZone=='"${AWS_DEFAULT_REGION}a"'].SubnetId" \
+    --output text \
+    --region ${AWS_DEFAULT_REGION})
+  aws cloud9 create-environment-ec2 \
+    --name cloud9-$RANDOM \
+    --instance-type t3.small \
+    --subnet-id ${FIRST_SUBNET} \
+    --automatic-stop-time-minutes 10080 \
+    --region ${AWS_DEFAULT_REGION}
+else
+  echo "you have no default vpc in $AWS_DEFAULT_REGION"
+fi
+
+```
+
+## install in cloud9 
 1. resize disk - [[cloud9-resize-instance-volume-script]]
 2. disable temporary credential from settings and delete `aws_session_token=` line in `~/.aws/credentials`
 3. install dependencies

@@ -85,7 +85,7 @@ nodeGroups:
   ssh:
     enableSsm: true
   privateNetworking: true
-  ami: "ami-06acc29adf84c8f3c"
+  ami: "ami-01345c338faf888f7"
   amiFamily: AmazonLinux2
   overrideBootstrapCommand: |
     #!/bin/bash

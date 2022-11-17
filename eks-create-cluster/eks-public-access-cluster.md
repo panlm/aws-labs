@@ -20,8 +20,8 @@ title: This is a github note
 
 ```sh
 # get optimized eks ami id for your version & region
-EKS_VERSION=1.23
 AWS_REGION=us-east-2
+EKS_VERSION=1.24
 aws ssm get-parameter --name /aws/service/eks/optimized-ami/${EKS_VERSION}/amazon-linux-2/recommended/image_id --region ${AWS_REGION} --query "Parameter.Value" --output text
 
 ```
@@ -85,7 +85,7 @@ nodeGroups:
   ssh:
     enableSsm: true
   privateNetworking: true
-  ami: "ami-01345c338faf888f7"
+  ami: "ami-0f49ec39b0f6fff05"
   amiFamily: AmazonLinux2
   overrideBootstrapCommand: |
     #!/bin/bash

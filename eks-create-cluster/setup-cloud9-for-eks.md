@@ -1,6 +1,6 @@
 ---
 created: 2022-05-21 12:46:05.435
-last_modified: 2022-10-17 08:17:09.959
+last_modified: 2022-11-20 11:28:25.928
 tags: aws/container/eks aws/cloud9 
 ---
 ```ad-attention
@@ -12,7 +12,7 @@ title: This is a github note
 ```
 
 ## need a cloud9 instance in your region
-click [here](https://us-east-2.console.aws.amazon.com/cloudshell) to run cloud shell and execute code block, and go to your region and open cloud9
+- click [here](https://us-east-2.console.aws.amazon.com/cloudshell) to run cloud shell and execute code block, and go to your region and open cloud9
 
 ```sh
 export AWS_DEFAULT_REGION=us-east-2 # need put each command
@@ -33,7 +33,10 @@ if [[ ! -z ${DEFAULT_VPC} ]]; then
     --instance-type t3.small \
     --subnet-id ${FIRST_SUBNET} \
     --automatic-stop-time-minutes 10080 \
-    --region ${AWS_DEFAULT_REGION}
+    --region ${AWS_DEFAULT_REGION} |tee /tmp/$$
+  echo "Open URL to access your Cloud9 Environment:"
+  C9_ID=$(cat /tmp/$$ |jq -r '.environmentId')
+  echo "https://${AWS_DEFAULT_REGION}.console.aws.amazon.com/cloud9/ide/${C9_ID}"
 else
   echo "you have no default vpc in $AWS_DEFAULT_REGION"
 fi
@@ -134,6 +137,11 @@ aws ec2 modify-volume --volume-id ${VOLUME_ID} --size 60
 sleep 10
 sudo growpart ${DEVICE_NAME} 1
 sudo xfs_growfs -d /
+
+if [[ $? -eq 1 ]]; then
+  ROOT_PART=$(df |grep -w / |awk '{print $1}')
+  sudo resize2fs ${ROOT_PART}
+fi
 
 # ---
 

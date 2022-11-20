@@ -1,6 +1,6 @@
 ---
 created: 2022-05-21 12:43:38.021
-last_modified: 2022-05-21 12:43:38.021
+last_modified: 2022-11-20 11:28:30.221
 tags: aws/container/eks 
 ---
 ```ad-attention
@@ -35,7 +35,7 @@ kind: ClusterConfig
 metadata:
   name: ekscluster1 # MODIFY cluster name, have another one in nodeGroup section
   region: "us-east-2" # MODIFY region
-  version: "1.23" # MODIFY version
+  version: "1.24" # MODIFY version
 
 availabilityZones: ["us-east-2a", "us-east-2b", "us-east-2c"]
 

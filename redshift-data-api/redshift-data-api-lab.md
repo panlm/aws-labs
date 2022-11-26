@@ -1,6 +1,6 @@
 ---
 created: 2022-03-01 11:23:18.633
-last_modified: 2022-10-11 08:48:13.945
+last_modified: 2022-11-23 20:20:17.394
 tags: aws/database/redshift 
 ---
 ```ad-attention
@@ -29,6 +29,11 @@ Amazon Redshift Data API 不能替代 JDBC 和 ODBC 驱动程序，适用于不�
 - 使用 Amazon EventBridge 和 Lambda 构建事件驱动的应用程序。
 - 调度 SQL 脚本以简化物化视图的数据加载、卸载和刷新。
 
+## create redshift cluster
+- 创建 redshift 集群 ([link](https://catalog.us-east-1.prod.workshops.aws/workshops/9f29cdba-66c0-445e-8cbb-28a092cb5ba7/en-US/lab1#cloud-formation)), or open this [cloudformation template](./redshift-immersion.yaml) directly
+    - 创建 vpc 加 2 个公有子网，并且创建 public access 的 redshift 集群
+- 然后从这里加载数据 ([link](https://catalog.us-east-1.prod.workshops.aws/workshops/9f29cdba-66c0-445e-8cbb-28a092cb5ba7/en-US/lab2))
+
 ## rest-api lab
 - [postman example](https://github.com/aws-samples/getting-started-with-amazon-redshift-data-api/tree/main/use-cases/rest-api-with-redshift-data-api)
     
@@ -44,9 +49,9 @@ head:
 body:
 ```json
 {
-"ClusterIdentifier": "redshift-cluster-1",
-"Database": "dev",
-"DbUser": "awsuser"
+    "ClusterIdentifier": "redshift-cluster-1",
+    "Database": "dev",
+    "DbUser": "awsuser"
 }
 ```
  
@@ -61,10 +66,10 @@ head:
 body:
 ```json
 {
-"ClusterIdentifier": "redshift-cluster-1",
-"Database": "dev",
-"DbUser": "awsuser",
-"Sql": "SELECT * FROM \"dev\".\"public\".\"event\";"
+    "ClusterIdentifier": "redshift-cluster-1",
+    "Database": "dev",
+    "DbUser": "awsuser",
+    "Sql": "SELECT * FROM \"dev\".\"public\".\"event\";"
 }
 ```
 
@@ -102,6 +107,7 @@ aws redshift-data list-tables  --database dev \
 - [Build a REST API to enable data consumption from Amazon Redshift](https://aws.amazon.com/blogs/big-data/build-a-rest-api-to-enable-data-consumption-from-amazon-redshift/)
 
 us-east-1 only
+
 post data:
 ```
 {

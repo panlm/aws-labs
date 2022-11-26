@@ -30,6 +30,7 @@ if [[ ! -z ${DEFAULT_VPC} ]]; then
     --region ${AWS_DEFAULT_REGION})
   aws cloud9 create-environment-ec2 \
     --name cloud9-$RANDOM \
+    --image-id amazonlinux-2-x86_64 \
     --instance-type t3.small \
     --subnet-id ${FIRST_SUBNET} \
     --automatic-stop-time-minutes 10080 \

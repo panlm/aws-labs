@@ -15,6 +15,9 @@ title: This is a github note
 - click [here](https://us-east-2.console.aws.amazon.com/cloudshell) to run cloud shell and execute code block, and go to your region and open cloud9
 
 ```sh
+# name=<give your cloud9 a name>
+datestring=$(date +%Y%m%d-%H%M)
+name=${name:=cloud9-$datestring}
 export AWS_DEFAULT_REGION=us-east-2 # need put each command
 
 DEFAULT_VPC=$(aws ec2 describe-vpcs \
@@ -29,7 +32,7 @@ if [[ ! -z ${DEFAULT_VPC} ]]; then
     --output text \
     --region ${AWS_DEFAULT_REGION})
   aws cloud9 create-environment-ec2 \
-    --name cloud9-$RANDOM \
+    --name ${name} \
     --image-id amazonlinux-2-x86_64 \
     --instance-type t3.small \
     --subnet-id ${FIRST_SUBNET} \
@@ -47,11 +50,24 @@ fi
 ## install in cloud9 
 1. resize disk - [[cloud9-resize-instance-volume-script]]
 2. disable temporary credential from settings and delete `aws_session_token=` line in `~/.aws/credentials`
-3. install dependencies
+3. install general dependencies
 ```sh
 # install others
 sudo yum -y install jq gettext bash-completion moreutils wget
 
+# install awscli
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+echo A |unzip awscliv2.zip
+sudo ./aws/install --update
+
+# install ssm session plugin
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo yum install -y session-manager-plugin.rpm
+
+```
+
+4. install eks related dependencies
+```sh
 # install kubectl with +/- 1 cluster version 1.23.12 / 1.22.15 / 1.24.6
 # sudo curl --location -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo curl --silent --location -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v1.24.6/bin/linux/amd64/kubectl"
@@ -68,11 +84,6 @@ alias k=kubectl
 complete -F __start_kubectl k
 echo "alias k=kubectl" >> ~/.bashrc
 echo "complete -F __start_kubectl k" >> ~/.bashrc
-
-# install awscli
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-echo A |unzip awscliv2.zip
-sudo ./aws/install --update
 
 # install eksctl
 # consider install eksctl version 0.89.0
@@ -115,14 +126,10 @@ flux -v
 # fluxctl version
 # fluxctl identity --k8s-fwd-ns flux
 
-# install ssm session plugin
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
-sudo yum install -y session-manager-plugin.rpm
-
 ```
 
-4. resize cloud9 disk
-5. disable cloud9 aws credential management
+5. resize cloud9 disk
+6. disable cloud9 aws credential management
 ```sh
 if [[ -c /dev/nvme0 ]]; then
   wget -qO- https://github.com/amazonlinux/amazon-ec2-utils/raw/main/ebsnvme-id >/tmp/ebsnvme-id
@@ -151,7 +158,7 @@ rm -vf ${HOME}/.aws/credentials
 
 ```
 
-6. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。
+7. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。
 - 如果你有workshop的Credentials，直接先复制粘贴到命令行，再执行下列步骤
 - 或者如果自己账号的cloud9，先用 `aws configure` 配置aksk
 
@@ -159,7 +166,8 @@ rm -vf ${HOME}/.aws/credentials
 AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 C9_INST_ID=$(curl 169.254.169.254/latest/meta-data/instance-id)
 ROLE_NAME=adminrole-$RANDOM
-cat > trust.json <<-EOF
+MY_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+envsubst > trust.json <<-EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -167,6 +175,12 @@ cat > trust.json <<-EOF
             "Effect": "Allow",
             "Principal": {
                 "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        },{
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::${MY_ACCOUNT_ID}:role/TeamRole"
             },
             "Action": "sts:AssumeRole"
         }
@@ -207,7 +221,7 @@ fi
 
 ```
 
-7. 在 cloud9 中，重新打开一个 terminal 窗口，并验证权限符合预期。如果权限又问题，请手工移除 instance profile ，再 assign 。
+8. 在 cloud9 中，重新打开一个 terminal 窗口，并验证权限符合预期。如果权限又问题，请手工移除 instance profile ，再 assign 。
 ```sh
 aws sts get-caller-identity
 

@@ -34,7 +34,7 @@ if [[ ! -z ${DEFAULT_VPC} ]]; then
   aws cloud9 create-environment-ec2 \
     --name ${name} \
     --image-id amazonlinux-2-x86_64 \
-    --instance-type t3.small \
+    --instance-type m5.large \
     --subnet-id ${FIRST_SUBNET} \
     --automatic-stop-time-minutes 10080 \
     --region ${AWS_DEFAULT_REGION} |tee /tmp/$$
@@ -51,7 +51,11 @@ fi
 1. resize disk - [[cloud9-resize-instance-volume-script]]
 2. disable temporary credential from settings and delete `aws_session_token=` line in `~/.aws/credentials`
 3. install general dependencies
+4. resize cloud9 disk
 ```sh
+# set size as your expectation, otherwize 60g as default volume size
+# size=200
+
 # install others
 sudo yum -y install jq gettext bash-completion moreutils wget
 
@@ -64,9 +68,29 @@ sudo ./aws/install --update
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
 sudo yum install -y session-manager-plugin.rpm
 
+if [[ -c /dev/nvme0 ]]; then
+  wget -qO- https://github.com/amazonlinux/amazon-ec2-utils/raw/main/ebsnvme-id >/tmp/ebsnvme-id
+  VOLUME_ID=$(sudo python3 /tmp/ebsnvme-id -v /dev/nvme0 |awk '{print $NF}')
+  DEVICE_NAME=/dev/nvme0n1
+else
+  C9_INST_ID=$(curl 169.254.169.254/latest/meta-data/instance-id)
+  VOLUME_ID=$(aws ec2 describe-volumes --filters Name=attachment.instance-id,Values=${C9_INST_ID} --query "Volumes[0].VolumeId" --output text)
+  DEVICE_NAME=/dev/xvda
+fi
+
+aws ec2 modify-volume --volume-id ${VOLUME_ID} --size ${size:-60}
+sleep 10
+sudo growpart ${DEVICE_NAME} 1
+sudo xfs_growfs -d /
+
+if [[ $? -eq 1 ]]; then
+  ROOT_PART=$(df |grep -w / |awk '{print $1}')
+  sudo resize2fs ${ROOT_PART}
+fi
+
 ```
 
-4. install eks related dependencies
+5. install eks related dependencies
 ```sh
 # install kubectl with +/- 1 cluster version 1.23.12 / 1.22.15 / 1.24.6
 # sudo curl --location -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -128,41 +152,18 @@ flux -v
 
 ```
 
-5. resize cloud9 disk
 6. disable cloud9 aws credential management
-```sh
-if [[ -c /dev/nvme0 ]]; then
-  wget -qO- https://github.com/amazonlinux/amazon-ec2-utils/raw/main/ebsnvme-id >/tmp/ebsnvme-id
-  VOLUME_ID=$(sudo python3 /tmp/ebsnvme-id -v /dev/nvme0 |awk '{print $NF}')
-  DEVICE_NAME=/dev/nvme0n1
-else
-  C9_INST_ID=$(curl 169.254.169.254/latest/meta-data/instance-id)
-  VOLUME_ID=$(aws ec2 describe-volumes --filters Name=attachment.instance-id,Values=${C9_INST_ID} --query "Volumes[0].VolumeId" --output text)
-  DEVICE_NAME=/dev/xvda
-fi
-
-aws ec2 modify-volume --volume-id ${VOLUME_ID} --size 60
-sleep 10
-sudo growpart ${DEVICE_NAME} 1
-sudo xfs_growfs -d /
-
-if [[ $? -eq 1 ]]; then
-  ROOT_PART=$(df |grep -w / |awk '{print $1}')
-  sudo resize2fs ${ROOT_PART}
-fi
-
-# ---
-
-aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE
-rm -vf ${HOME}/.aws/credentials
-
-```
-
 7. 分配管理员role到instance。（直接执行下列步骤可能遇到权限不够的告警）。
 - 如果你有workshop的Credentials，直接先复制粘贴到命令行，再执行下列步骤
 - 或者如果自己账号的cloud9，先用 `aws configure` 配置aksk
 
 ```sh
+
+aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE
+rm -vf ${HOME}/.aws/credentials
+
+# ---
+
 AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 C9_INST_ID=$(curl 169.254.169.254/latest/meta-data/instance-id)
 ROLE_NAME=adminrole-$RANDOM
@@ -226,7 +227,6 @@ fi
 aws sts get-caller-identity
 
 ```
-
 
 
 ## reference

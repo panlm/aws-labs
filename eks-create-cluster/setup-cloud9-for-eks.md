@@ -34,7 +34,7 @@ if [[ ! -z ${DEFAULT_VPC} ]]; then
   aws cloud9 create-environment-ec2 \
     --name ${name} \
     --image-id amazonlinux-2-x86_64 \
-    --instance-type m5.large \
+    --instance-type m5.2xlarge \
     --subnet-id ${FIRST_SUBNET} \
     --automatic-stop-time-minutes 10080 \
     --region ${AWS_DEFAULT_REGION} |tee /tmp/$$
@@ -53,7 +53,7 @@ fi
 3. install general dependencies
 4. resize cloud9 disk
 ```sh
-# set size as your expectation, otherwize 60g as default volume size
+# set size as your expectation, otherwize 100g as default volume size
 # size=200
 
 # install others
@@ -78,7 +78,7 @@ else
   DEVICE_NAME=/dev/xvda
 fi
 
-aws ec2 modify-volume --volume-id ${VOLUME_ID} --size ${size:-60}
+aws ec2 modify-volume --volume-id ${VOLUME_ID} --size ${size:-100}
 sleep 10
 sudo growpart ${DEVICE_NAME} 1
 sudo xfs_growfs -d /

@@ -8,6 +8,7 @@ title: This is a github note
 
 ```
 # eks-public-access-cluster
+
 ## prep
 - do not need to create vpc in advance
 - [[setup-cloud9-for-eks]] or using your local environment
@@ -133,6 +134,20 @@ iam:
 
 ```sh
 eksctl create cluster -f c1.yaml
+```
+
+## access eks cluster from web console
+```sh
+CLUSTER_NAME=ekscluster1
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=us-east-2
+eksctl create iamidentitymapping \
+  --cluster ${CLUSTER_NAME} \
+  --arn arn:aws:iam::${ACCOUNT_ID}:role/TeamRole \
+  --username cluster-admin \
+  --group system:masters \
+  --region ${AWS_REGION}
+
 ```
 
 ## default tags on subnet

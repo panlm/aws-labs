@@ -92,9 +92,9 @@ fi
 
 5. install eks related dependencies
 ```sh
-# install kubectl with +/- 1 cluster version 1.23.12 / 1.22.15 / 1.24.6
+# install kubectl with +/- 1 cluster version 1.23.15 / 1.22.17 / 1.24.9 / 1.25.5
 # sudo curl --location -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo curl --silent --location -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v1.24.6/bin/linux/amd64/kubectl"
+sudo curl --silent --location -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v1.24.9/bin/linux/amd64/kubectl"
 
 # 1.22.x version of kubectl
 # sudo curl --silent --location -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v1.22.11/bin/linux/amd64/kubectl"
@@ -121,15 +121,16 @@ eksctl completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
 
+# helm newest version (3.10.3)
+curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 # helm 3.8.2 (helm 3.9.0 will have issue #10975)
-#curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-wget https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
-tar xf helm-v3.8.2-linux-amd64.tar.gz
-sudo mv linux-amd64/helm /usr/local/bin/helm
+# wget https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
+# tar xf helm-v3.8.2-linux-amd64.tar.gz
+# sudo mv linux-amd64/helm /usr/local/bin/helm
 helm version --short
 
-# install aws-iam-authenticator
-wget -O aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+# install aws-iam-authenticator 0.5.12 
+wget -O aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.12/aws-iam-authenticator_0.5.12_linux_amd64
 chmod +x ./aws-iam-authenticator
 sudo mv ./aws-iam-authenticator /usr/local/bin/
 

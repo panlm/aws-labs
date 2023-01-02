@@ -154,7 +154,7 @@ eksctl create iamidentitymapping \
 - [[eksctl-default-tags-on-subnet]]
 
 ## network topo preview
-- [[security-group-for-eks-deepdive]]
+- [[TC-security-group-for-eks-deepdive]]
 
 ## refer
 - [[eks-private-access-cluster]]

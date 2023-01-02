@@ -104,6 +104,7 @@ REGISTRY=602401143452.dkr.ecr.us-east-1.amazonaws.com
 
 ## blog
 - [[How To Expose Multiple Applications on Amazon EKS Using a Single Application Load Balancer]]
+- [[Expose Amazon EKS pods through cross-account load balancer]]
 
 
 ## slide

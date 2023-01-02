@@ -8,40 +8,41 @@ title: compatible github md format
 ```
 
 ## eks
-* [Prepare Cloud9 environment before eks lab](./eks-create-cluster/setup-cloud9-for-eks.md)
-* [Create eks cluster with public access](./eks-create-cluster/eks-public-access-cluster.md)
-* [Create eks cluster with private access](./eks-create-cluster/eks-private-access-cluster.md)
-* [Prepare vpc if you needed to](./eks-create-cluster/create-standard-vpc-for-lab.md)
+* [Prepare Cloud9 environment before eks lab](setup-cloud9-for-eks.md)
+* [Create eks cluster with public access](eks-public-access-cluster.md)
+* [Create eks cluster with private access](eks-private-access-cluster.md)
+* [Prepare vpc if you needed to](create-standard-vpc-for-lab.md)
 
 ### network
-* [aws load balancer controller](./eks-network/aws-load-balancer-controller.md)
-* [security group on pod](./eks-network/enable-sg-on-pod.md)
-* [externaldns for route53](./eks-network/externaldns-for-route53.md)
+* [aws load balancer controller](aws-load-balancer-controller.md)
+* [security group on pod](enable-sg-on-pod.md)
+* [externaldns for route53](externaldns-for-route53.md)
 
 ### devops
-* [argocd](./eks-gitops/argocd-lab.md)
-* [flux](./eks-gitops/flux-lab.md)
+* [argocd](argocd-lab.md)
+* [flux](flux-lab.md)
 
 ### csi
-* [efs](./eks-ebs-efs-csi/efs-for-eks.md)
-* [ebs](./eks-ebs-efs-csi/ebs-for-eks.md)
+* [efs](efs-for-eks.md)
+* [ebs](ebs-for-eks.md)
 
 ### monitor
-* [enable container insight](./eks-monitor/eks-container-insights.md)
-* [prometheus in cloudwatch](./eks-monitor/enable-prometheus-in-cloudwatch.md)
-* [metric server](./eks-monitor/install-metric-server.md)
+* [enable container insight](2-eks-container-insights.md)
+* [prometheus in cloudwatch](3-enable-prometheus-in-cloudwatch.md)
+* [metric server](1-install-metric-server.md)
 
 ### fargate
-- [Fargate Lab](./eks-fargate/eks-fargate-lab.md)
+- [Fargate Lab](eks-fargate-lab.md)
 
 ## data analytics
-* [Process CloudWatch logs sent to S3 through Kinesis Firehose](./eks-cloudwatch-log-firehose-s3/stream-k8s-control-panel-logs-to-s3.md)
+* [Process CloudWatch logs sent to S3 through Kinesis Firehose](stream-k8s-control-panel-logs-to-s3.md)
+* [export-cloudwatch-log-group-to-s3](export-cloudwatch-log-group-to-s3.md)
 
 ## redshift
-* [Redshift Data API Lab](./redshift-data-api/redshift-data-api-lab.md)
+* [Redshift Data API Lab](1-redshift-data-api-lab.md)
 
 ## storage gateway
-* [File Gateway Lab](./storage-gateway/file-gateway-lab.md)
+* [File Gateway Lab](2-file-storage-gateway-lab.md)
 
 
 
